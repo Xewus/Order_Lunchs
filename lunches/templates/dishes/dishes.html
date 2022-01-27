@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Список блюд{% endblock %}
+{% block card_header %}
+{% if not balance %}
+Недостаточно средств.
+{% elif dishes %}
+Меню на сегодня.<br>
+Отметьте желаемые блюда галочкой и нажмите "Заказать".
+{% else %}
+Ничегошеньки нет :(
+{% endif %}
+{% endblock card_header %}
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  {% include 'includes/days.html' %}
+  <div class="card">
+    {% for dish in dishes %}
+      <p>
+        <div class="card-header">
+          Хочу это съесть <input type="checkbox" name={{ dish.name }}><br>
+        </div>
+        Блюдо: "{{ dish.name }}".
+        Стоимость: {{ dish.price }}<br>
+        Описание: {{ dish.description }}<br>
+        <br>
+        Дни поставки:<br>
+        {% for day in dish.get_order_days %}
+        {{ day }}<br>
+        {% endfor %}
+      </p>
+    {% endfor %}
+  </div>
+  {% if dishes %}
+  <div class="col-md-6 offset-md-4">
+    <button type="submit" class="btn btn-primary">
+      Заказать отмеченные блюда
+    </button>
+  </div>
+  {% endif %}
+</form> 
+{% endblock %}

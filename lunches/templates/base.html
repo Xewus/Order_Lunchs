@@ -1,0 +1,28 @@
+<!DOCTYPE html> <!-- Используется html 5 версии -->
+<html lang="ru"> <!-- Язык сайта - русский -->
+{% include "includes/head.html" %}
+  <body>
+  {% include "includes/header.html" %}
+    <main>
+      <div class="container py-5"> 
+        <div class="row justify-content-center">
+          <div class="col-md-8 p-5">
+            <div class="card">
+              <div class="card-header">
+                {% block card_header %}
+                  Забыли кард-хедер
+                {% endblock card_header %}
+              </div> <!-- card header -->
+              <div class="card-body">
+                {% block content %}
+                  Нет контента!
+                {% endblock content %}
+              </div> <!-- card body -->
+            </div> <!-- card -->
+          </div> <!-- col -->
+        </div> <!-- row -->
+      </div> <!-- container -->
+    </main>
+  {% include 'includes/footer.html' %}
+  </body>
+</html

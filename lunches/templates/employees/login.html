@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Войти{% endblock %}
+{% block card_header %}
+  Войти на сайт
+{% endblock card_header %}
+{% block content %}
+  {% include 'includes/form_errors.html' %}
+  <form method="post"
+    {% if action_url %}
+      action="{% url action_url %}"
+    {% endif %}
+  >
+    {% csrf_token %}
+    {% include 'includes/form.html' %} 
+    <div class="col-md-6 offset-md-4">
+      <button type="submit" class="btn btn-primary">
+        Войти
+      </button>
+    </div> <!-- col -->
+    <a href="{% url 'employees:password_reset' %}" class="btn btn-link">
+      Забыли пароль?
+    </a>
+  </form>
+{% endblock %} 

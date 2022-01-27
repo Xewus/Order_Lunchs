@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Список блюд{% endblock %}
+{% block card_header %}
+  Меню на сегодня
+{% endblock card_header %}
+{% block content %}
+<form method="post" action="/">
+  {% csrf_token %}
+  <div class="card">
+    {% for dish in dishes %}
+      <p>
+        <div class="card-header">
+          Хочу это съесть <input type="checkbox" name="to_order"><br>
+        </div>
+        Блюдо: "{{ dish.name }}".
+        Стоимость: {{ dish.price }}<br>
+        Описание: {{ dish.description }}<br>
+      </p>
+    {% endfor %}
+  </div>
+  <div class="col-md-6 offset-md-4">
+    <button type="submit" class="btn btn-primary">
+      Заказать
+    </button>
+  </div>
+</form> 
+{% endblock %}

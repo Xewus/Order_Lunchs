@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}{{ user.first_name }}{% endblock %}
+Сотрудник: {{ user.first_name }}<br>
+{% if department %}
+  Отдел: {{ department }}
+{% endif %}<br>
+{% block card_header %}
+  {% if dishes %}
+    До {{ end_time }} можно изменить заказ:
+  {% else %}
+    Сегодня вы ещё не делали заказ.
+  {% endif %}
+{% endblock card_header %}
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  <div class="card">
+    {% for dish in dishes %}
+      <p>
+        <div class="card-header">
+          Теперь не хочу это! <input type="checkbox" name={{ dish.name }}><br>
+        </div>
+        Блюдо: "{{ dish.name }}".
+        Стоимость: {{ dish.price }}<br>
+        Описание: {{ dish.description }}<br>
+      </p>
+    {% endfor %}
+  </div>
+  <div class="col-md-6 offset-md-4">
+    <button type="submit" class="btn btn-primary">
+      Удалить отмеченные блюда
+    </button>
+  </div>
+</form>
+<div class="card-header">
+  <div class="col-md-6 offset-md-4">
+    Итого заказано на сумму: {{ summa }}<br>
+  </div>
+<div class="col-md-6 offset-md-4">
+{% endblock %}
