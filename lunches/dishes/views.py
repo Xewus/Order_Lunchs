@@ -53,9 +53,8 @@ def profile(request, id):
         on_dishes = set(dish for dish, order in request.POST.items() if order == 'on')
         on_dishes = Dish.objects.filter(
             name__in=on_dishes,
-            allow_order=True,
             orders__customer=user,
-            orders__order_date=todey
+            orders__order_date=dt.now()
         )
         summa = sum(dish.price for dish in on_dishes)
         user.balance = user.balance + summa
@@ -67,6 +66,8 @@ def profile(request, id):
 
 @login_required
 def list_dishes(request, order_day=''):
+    week_days = '12345'
+    allow_order = bool(order_day in week_days)
     user = request.user
     balance = user.balance > 0
     dishes = None
@@ -76,8 +77,8 @@ def list_dishes(request, order_day=''):
         'title': title,
         'balance': balance,
         'dishes': dishes,
+        'allow_order': allow_order
     }
-    week_days = '12345'
 
     if not user.overdraft and not balance:
         return redirect('dishes:profile', user.id)
@@ -87,15 +88,13 @@ def list_dishes(request, order_day=''):
     for day in allow_days:
         or_filter |=Q(order_days__contains=day)
 
-    dishes = Dish.objects.filter(
-        allow_order=True
-    ).exclude(
+    dishes = Dish.objects.exclude(
         orders__customer=user
     ).filter(
         or_filter
     )
 
-    if order_day in week_days:
+    if allow_order:
         and_filter = Q(order_days__contains=order_day)
         dishes = dishes.filter(and_filter)
     
@@ -108,9 +107,9 @@ def list_dishes(request, order_day=''):
     if request.method == 'POST':
         on_dishes = set(dish for dish, order in request.POST.items() if order == 'on')
         on_dishes = Dish.objects.filter(
-            name__in=on_dishes, allow_order=True
+            name__in=on_dishes
         ).exclude(
-            orders__customer=user, orders__order_date=todey
+            orders__customer=user, orders__order_date=dt.now()
         )
         summa = sum(dish.price for dish in on_dishes)
         if not user.overdraft and summa > user.balance:
