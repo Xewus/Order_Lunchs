@@ -86,7 +86,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = str(BASE_DIR / STATIC_URL),
 
 LOGIN_URL = 'employees:login'
-LOGIN_REDIRECT_URL = 'employees:index'
+LOGIN_REDIRECT_URL = 'dishes:index'
 LOGOUT_REDIRECT_URL = 'https://www.youtube.com/watch?v=IA_evL-1F0w'
 
 

@@ -11,7 +11,7 @@
         </li>
         {% if user.is_authenticated %}
         <li class="nav-item"> 
-          <a class="nav-link {% if view_name  == 'dishes:list_dishes' %}active{% endif %}" href="{% url 'dishes:list_dishes' 0 %}">Меню</a>
+          <a class="nav-link {% if view_name  == 'dishes:profile_orders' %}active{% endif %}" href="{% url 'dishes:profile_orders' user.id %}">Ваши заказы</a>
         </li>
         <li class="nav-item"> 
           <a class="nav-link {% if view_name  == 'employees:password_change' %}active{% endif %}" href="{% url 'employees:password_change' %}">Изменить пароль</a>

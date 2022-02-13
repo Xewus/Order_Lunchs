@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block card_header %}
+История Ваших заказов
+{% endblock card_header %}
+{% block content %}
+{% if one_order_page %}
+{% for dish in query_res %}
+<br>
+{{ dish.name }}<br>
+{{ dish.description }}<br>
+{{ dish.price }}<br>
+{% endfor %}
+{% else %}
+{% for order in query_res %}
+  <a class="nav-link" href="{% url 'dishes:profile_order' user.id order.id %}">{{ order.order_date }}</a>
+{% endfor %}
+{% endif %}
+{% endblock content %}

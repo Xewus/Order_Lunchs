@@ -1,33 +1,42 @@
 <div class="card">
   <ul class="nav nav-pills">
-    {% if start_allow_days <= 1 %}
+    {% if start_allow_days <= 0 %}
       <li class="nav-item"> 
         <a class="nav-link" href="{% url 'dishes:list_dishes' 1 %}">Понедельник</a>
       </li>
     {% endif %}
     
-    {% if start_allow_days <= 2 %}
+    {% if start_allow_days <= 1 %}
       <li class="nav-item"> 
         <a class="nav-link" href="{% url 'dishes:list_dishes' 2 %}">Вторник</a>
       </li>
     {% endif %}
     
-    {% if start_allow_days <= 3 %}
+    {% if start_allow_days <= 2 %}
       <li class="nav-item"> 
         <a class="nav-link" href="{% url 'dishes:list_dishes' 3 %}">Среда</a>
       </li>
     {% endif %}
 
     
-    {% if start_allow_days <= 4 %}
+    {% if start_allow_days <= 3 %}
       <li class="nav-item"> 
         <a class="nav-link" href="{% url 'dishes:list_dishes' 4 %}">Четверг</a>
       </li>
     {% endif %}
 
-    {% if start_allow_days <= 5 %}
+    {% if start_allow_days <= 4 %}
       <li class="nav-item"> 
         <a class="nav-link" href="{% url 'dishes:list_dishes' 5 %}">Пятница</a>
+      </li>
+    {% endif %}
+
+    {% if start_allow_days > 4 %}
+      <li class="nav-item">
+        <a class="nav-link">Суббота Воскресенье</a>
+      </li>
+      <li class="nav-item"> 
+        <a class="nav-link" href="{% url 'dishes:list_dishes' 8 %}">Понедельник</a>
       </li>
     {% endif %}
   </ul>

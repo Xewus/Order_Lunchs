@@ -1,34 +1,39 @@
 {% extends 'base.html' %}
-{% block title %}Список блюд{% endblock %}
+{% comment "required values" %}
+`balance`:bool user.balance
+`dishes`:Mone|iterable list of Dish obkects
+{% endcomment %}
+
 {% block card_header %}
-{% if not balance %}
-Недостаточно средств.
-{% elif dishes %}
-Меню на сегодня.<br>
-Отметьте желаемые блюда галочкой и нажмите "Заказать".
-{% else %}
-Ничегошеньки нет :(
-{% endif %}
+  {% if not balance %}
+    Недостаточно средств.
+  {% elif dishes %}
+    Меню на сегодня.<br>
+    Отметьте желаемые блюда галочкой и нажмите "Заказать".
+  {% else %}
+    Ничегошеньки нет :(
+  {% endif %}
 {% endblock card_header %}
+
 {% block content %}
-{% if dishes %}
-<form method="post">
-  {% csrf_token %}
-  {% include 'includes/days.html' %}
-  <div class="card">
-    {% for dish in dishes %}
-      <p>
+  {% if dishes %}
+    <form method="post">
+      {% csrf_token %}
+      {% include 'includes/days.html' %}
+      <div class="card">
+      {% for dish in dishes %}
+        <p>
         {% if allow_order %}
-        <div class="card-header">
-          Хочу это съесть <input type="checkbox" name={{ dish.name }}><br>
-        </div>
+          <div class="card-header">
+            Хочу это съесть <input type="checkbox" name={{ dish.name }}><br>
+          </div>
         {% endif %}
         Блюдо: "{{ dish.name }}".
         Стоимость: {{ dish.price }}<br>
         Описание: {{ dish.description }}<br>
         <br>
         Дни поставки:<br>
-        {% for day in dish.get_order_days %}
+        {% for day in dish.delivery_days.all %}
         {{ day }}<br>
         {% endfor %}
       </p>

@@ -2,7 +2,7 @@ from datetime import date
 from django.contrib.auth import get_user_model
 from django.db.models import (SET_NULL, BooleanField, CharField,
                               DecimalField, ForeignKey, DateField,
-                              TimeField, Model,
+                              TimeField, Model, ManyToManyField,
                               UniqueConstraint)
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -22,7 +22,23 @@ WEEKDAYS = {
         }
 
 
+class DeliveryDate(Model):
+    """
+    Хранит возможнве даты поставок.M2M
+    """
+    delivery_date = DateField(
+        verbose_name='Дата поставки',
+        unique=True
+    )
+
+    def __str__(self):
+        return str(self.delivery_date)
+
+
 class TypeFood(Model):
+    """
+    Укащывает вид блюда. M2M.
+    """
     name = CharField(
         verbose_name='Тип блюда',
         max_length=20,
@@ -35,6 +51,7 @@ class TypeFood(Model):
 
     def __str__(self):
         return f'{self.name}'
+
 
 class Dish(Model):
     name = CharField(
@@ -75,13 +92,11 @@ class Dish(Model):
         blank=True,
         on_delete=SET_NULL,
     )
-    order_days = CharField(
+    delivery_days = ManyToManyField(
         verbose_name='Дни для заказа',
-        max_length=7,
-    )
-    allow_order = BooleanField(
-        verbose_name='Разрешено для заказа',
-        default=True,
+        to=DeliveryDate,
+        related_name='dishes',
+        blank=True,
     )
 
     class Meta:
@@ -93,9 +108,8 @@ class Dish(Model):
         return f'{self.name}. Стоимость: {self.price}.'
 
     @property
-    def get_order_days(self):
-        days = tuple(WEEKDAYS[day] for day in self.order_days)
-        return  days
+    def get_delivery_days(self):
+        return  self.delivery_days.all()
 
 
 class Order(Model):
@@ -113,8 +127,11 @@ class Order(Model):
         null=True,
         on_delete=SET_NULL,
     )
+    delivery_date = DateField(
+        verbose_name='Дата поступления заказа'
+    )
     order_date = DateField(
-        verbose_name='Дата заказа',
+        verbose_name='Дата оформления заказа',
         auto_now=True,
     )
     
@@ -122,14 +139,14 @@ class Order(Model):
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
         ordering = (
-            'order_date',
+            'delivery_date',
             'customer__last_name',
             'customer__first_name',
             'customer__patronymic',
         )
         constraints = (
             UniqueConstraint(
-                fields=('dish', 'customer', 'order_date',),
+                fields=('dish', 'customer', 'delivery_date',),
                 name='Разрешён один заказ в день.',
 
             ),
@@ -137,6 +154,9 @@ class Order(Model):
 
 
 class OrderTime(Model):
+    """
+    Ограничивает время заказов.
+    """
     start_time = TimeField(
         verbose_name='Время начала приёма заказов',
         blank=True,
@@ -155,3 +175,7 @@ class OrderTime(Model):
 
     def clean(self):
         validate_only_one_instance(self)
+
+    @property
+    def get_end_time_hour(self):
+        return self.end_time.hour
